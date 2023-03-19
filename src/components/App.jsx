@@ -16,14 +16,14 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState('');
 
-  const handleSubmit = useCallback(inputValue => {
+  const handleSubmit = inputValue => {
     setQuery(inputValue);
     setPage(1);
     setSearchResult([]);
     const newId = nanoid();
     setId(newId);
     console.log(newId);
-  }, []);
+  };
 
   useEffect(() => {
     if (!query) {
@@ -51,11 +51,11 @@ const App = () => {
     };
 
     fetchImages(query, page);
-  }, [query, page, id]);
+  }, [query, page]);
 
-  const handleLoadMore = useCallback(() => {
+  const handleLoadMore = () => {
     setPage(prevPage => prevPage + 1);
-  }, []);
+  };
 
   const checkPagesSum = useCallback(() => {
     const pagesSum = Math.ceil(total / 12);

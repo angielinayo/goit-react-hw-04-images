@@ -1,44 +1,39 @@
 import { Backdrop, ModalWindow } from './Modal.styled';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 
-class Modal extends Component {
-  static propTypes = {
-    image: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    imageTag: PropTypes.string.isRequired,
-  };
+const Modal = ({ image, closeModal, imageTag }) => {
+  useEffect(() => {
+    const onKeyDown = event => {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [closeModal]);
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
-  }
-
-  onKeyDown = event => {
-    if (event.key === 'Escape') {
-      this.props.closeModal();
-    }
-  };
-
-  handleBackdropClick = event => {
+  const handleBackdropClick = event => {
     if (event.target === event.currentTarget) {
-      this.props.closeModal();
+      closeModal();
     }
   };
 
-  render() {
-    return (
-      <>
-        {}
-        <Backdrop onClick={this.handleBackdropClick}>
-          <ModalWindow src={this.props.image} alt={this.props.imageTag} />
-        </Backdrop>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Backdrop onClick={handleBackdropClick}>
+        <ModalWindow src={image} alt={imageTag} />
+      </Backdrop>
+    </>
+  );
+};
+
+Modal.propTypes = {
+  image: PropTypes.string.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  imageTag: PropTypes.string.isRequired,
+};
 
 export default Modal;

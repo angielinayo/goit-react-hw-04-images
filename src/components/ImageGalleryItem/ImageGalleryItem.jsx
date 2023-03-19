@@ -1,60 +1,51 @@
 import ImageGalleryItemStyled from './ImageGalleryItem.styled';
 import Modal from 'components/Modal/Modal';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-class ImageGalleryItem extends Component {
-  static propTypes = {
-    props: PropTypes.arrayOf(PropTypes.object.isRequired),
+const ImageGalleryItem = ({ images }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageTag, setImageTag] = useState('');
+
+  const openModal = event => {
+    setImageUrl(event.target.getAttribute('data-url'));
+    setImageTag(event.target.getAttribute('data-tag'));
+    setIsModalOpen(true);
   };
 
-  state = {
-    isModalOpen: false,
-    imageUrl: '',
-    imageTag: '',
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
-  openModal = event => {
-    this.setState({
-      imageUrl: event.target.getAttribute('data-url'),
-      imageTag: event.target.getAttribute('data-tag'),
-      isModalOpen: true,
-    });
-  };
+  return (
+    <>
+      {images.map(image => (
+        <ImageGalleryItemStyled key={image.id}>
+          {isModalOpen && (
+            <Modal
+              closeModal={closeModal}
+              image={imageUrl}
+              imageTag={imageTag}
+            />
+          )}
 
-  closeModal = () => {
-    this.setState({ isModalOpen: false });
-  };
+          <img
+            className="galleryImg"
+            src={image.webformatURL}
+            alt={image.tags}
+            data-tag={image.tags}
+            data-url={image.largeImageURL}
+            onClick={openModal}
+          />
+        </ImageGalleryItemStyled>
+      ))}
+    </>
+  );
+};
 
-  render() {
-    const { images } = this.props;
-    return (
-      <>
-        {images.map(image => {
-          return (
-            <ImageGalleryItemStyled key={image.id}>
-              {this.state.isModalOpen && (
-                <Modal
-                  closeModal={this.closeModal}
-                  image={this.state.imageUrl}
-                  imageTag={this.state.imageTag}
-                />
-              )}
-
-              <img
-                className="galleryImg"
-                src={image.webformatURL}
-                alt={image.tags}
-                data-tag={image.tags}
-                data-url={image.largeImageURL}
-                onClick={this.openModal}
-              />
-            </ImageGalleryItemStyled>
-          );
-        })}
-      </>
-    );
-  }
-}
+ImageGalleryItem.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.object.isRequired),
+};
 
 export default ImageGalleryItem;
